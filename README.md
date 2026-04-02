@@ -257,6 +257,20 @@ python3 create_video.py 5678/5678_Slides_en.pdf \
 
 ---
 
+## Exporting speaker notes
+
+To export all speaker notes to a text file for review or editing:
+
+```bash
+python3 export_notes.py 5678/5678_Slides_en.pptx
+# → 5678/5678_Slides_en_notes.txt
+
+python3 export_notes.py 5678/5678_Slides_en.pptx --format json
+# → 5678/5678_Slides_en_notes.json
+```
+
+---
+
 ## Regenerating individual slides
 
 To regenerate audio for a specific slide (e.g. after editing notes or fixing pronunciation):
@@ -311,6 +325,7 @@ python3 create_video.py 5678/5678_Slides_en.pdf 5678/5678_Slides_en_audio/ \
 lrec-video-agent/
 ├── translate_slides.py       # Step 1: translate slide text (Japanese → English)
 ├── translate_notes.py        # Step 2: translate speaker notes (Japanese → English)
+├── export_notes.py           # Utility: export all speaker notes to .txt or .json
 ├── generate_notes.py         # Step 2b: generate notes from scratch (no Japanese notes needed)
 ├── trim_notes.py             # Step 3: trim notes to fit target duration
 ├── tts_elevenlabs.py         # Step 4: synthesize audio with cloned voice
