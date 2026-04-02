@@ -1,0 +1,37 @@
+# API keys / secrets
+.env
+*.env
+
+# Large binary files
+*.pptx
+*.pdf
+*.mp3
+*.mp4
+*.wav
+
+# Audio output directories
+*_audio/
+
+# Checkpoints
+*.checkpoint.json
+*_checkpoint.json
+tts_checkpoint.json
+
+# Backups
+*_backup.pptx
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# Test output
+*/tts_test/
