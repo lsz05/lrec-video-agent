@@ -68,9 +68,9 @@ brew install ffmpeg          # video assembly
 Place your files in a folder named after the submission ID:
 
 ```
-1091/
-├── 1091_Slides.pptx    # original Japanese slides
-└── 1091_Paper.pdf      # paper PDF (used as translation context)
+5678/
+├── 5678_Slides.pptx    # original Japanese slides
+└── 5678_Paper.pdf      # paper PDF (used as translation context)
 ```
 
 ---
@@ -82,9 +82,9 @@ Place your files in a folder named after the submission ID:
 Translates all slide text from Japanese to English, preserving fonts, colors, and layout.
 
 ```bash
-python3 translate_slides.py 1091/1091_Slides.pptx \
-    --output 1091/1091_Slides_en.pptx \
-    --paper  1091/1091_Paper.pdf
+python3 translate_slides.py 5678/5678_Slides.pptx \
+    --output 5678/5678_Slides_en.pptx \
+    --paper  5678/5678_Paper.pdf
 ```
 
 | Argument | Description |
@@ -103,9 +103,9 @@ Reads Japanese speaker notes from the original `.pptx` and writes translated
 English notes into the `_en.pptx` produced by Step 1.
 
 ```bash
-python3 translate_notes.py 1091/1091_Slides.pptx \
-                           1091/1091_Slides_en.pptx \
-    --paper 1091/1091_Paper.pdf
+python3 translate_notes.py 5678/5678_Slides.pptx \
+                           5678/5678_Slides_en.pptx \
+    --paper 5678/5678_Paper.pdf
 ```
 
 | Argument | Description |
@@ -122,8 +122,8 @@ If your slides have no existing Japanese notes, use this script to generate
 English speaker notes directly from the slide content using Claude.
 
 ```bash
-python3 generate_notes.py 1091/1091_Slides_en.pptx \
-    --paper 1091/1091_Paper.pdf \
+python3 generate_notes.py 5678/5678_Slides_en.pptx \
+    --paper 5678/5678_Paper.pdf \
     --target-min 15
 ```
 
@@ -146,7 +146,7 @@ Trims the speaker notes to fit a target presentation duration using Claude.
 A backup of the original is saved automatically.
 
 ```bash
-python3 trim_notes.py 1091/1091_Slides_en.pptx --target-min 15
+python3 trim_notes.py 5678/5678_Slides_en.pptx --target-min 15
 ```
 
 | Argument | Description |
@@ -160,7 +160,7 @@ To estimate current duration without trimming:
 ```bash
 python3 -c "
 from pptx import Presentation
-prs = Presentation('1091/1091_Slides_en.pptx')
+prs = Presentation('5678/5678_Slides_en.pptx')
 words = sum(len(s.notes_slide.notes_text_frame.text.strip().split())
             for s in prs.slides
             if s.has_notes_slide and s.notes_slide.notes_text_frame.text.strip())
@@ -176,7 +176,7 @@ Reads English speaker notes from the `.pptx` and synthesizes each slide into an
 MP3 using ElevenLabs with your cloned voice.
 
 ```bash
-python3 tts_elevenlabs.py 1091/1091_Slides_en.pptx \
+python3 tts_elevenlabs.py 5678/5678_Slides_en.pptx \
     --voice-id <YOUR_VOICE_ID> \
     --speed 1.04
 ```
@@ -238,9 +238,9 @@ Combines slide images (rendered from PDF) with narration audio into a final `.mp
 **First, export your `.pptx` to PDF** (File → Export → PDF in PowerPoint or Keynote).
 
 ```bash
-python3 create_video.py 1091/1091_Slides_en.pdf \
-    1091/1091_Slides_en_audio/ \
-    --out 1091/1091_presentation.mp4 \
+python3 create_video.py 5678/5678_Slides_en.pdf \
+    5678/5678_Slides_en_audio/ \
+    --out 5678/5678_presentation.mp4 \
     --padding 1
 ```
 
@@ -263,10 +263,10 @@ To regenerate audio for a specific slide (e.g. after editing notes or fixing pro
 
 ```bash
 # Delete the specific file
-rm 1091/1091_Slides_en_audio/slide_05.mp3
+rm 5678/5678_Slides_en_audio/slide_05.mp3
 
 # Re-run — the script will skip already-completed slides via manifest
-python3 tts_elevenlabs.py 1091/1091_Slides_en.pptx --voice-id <YOUR_VOICE_ID> --speed 1.04
+python3 tts_elevenlabs.py 5678/5678_Slides_en.pptx --voice-id <YOUR_VOICE_ID> --speed 1.04
 ```
 
 To regenerate only slides containing a specific term:
@@ -274,7 +274,7 @@ To regenerate only slides containing a specific term:
 ```bash
 python3 -c "
 from pptx import Presentation
-prs = Presentation('1091/1091_Slides_en.pptx')
+prs = Presentation('5678/5678_Slides_en.pptx')
 for i, s in enumerate(prs.slides, 1):
     if s.has_notes_slide and 'TERM' in s.notes_slide.notes_text_frame.text:
         print(f'Slide {i}')
@@ -289,18 +289,18 @@ for i, s in enumerate(prs.slides, 1):
 export VOICE_ID=your_elevenlabs_voice_id
 
 # Translate
-python3 translate_slides.py 1091/1091_Slides.pptx --output 1091/1091_Slides_en.pptx --paper 1091/1091_Paper.pdf
-python3 translate_notes.py  1091/1091_Slides.pptx 1091/1091_Slides_en.pptx --paper 1091/1091_Paper.pdf
+python3 translate_slides.py 5678/5678_Slides.pptx --output 5678/5678_Slides_en.pptx --paper 5678/5678_Paper.pdf
+python3 translate_notes.py  5678/5678_Slides.pptx 5678/5678_Slides_en.pptx --paper 5678/5678_Paper.pdf
 
 # Trim to 15 minutes
-python3 trim_notes.py 1091/1091_Slides_en.pptx --target-min 15
+python3 trim_notes.py 5678/5678_Slides_en.pptx --target-min 15
 
 # Synthesize audio
-python3 tts_elevenlabs.py 1091/1091_Slides_en.pptx --voice-id $VOICE_ID --speed 1.04
+python3 tts_elevenlabs.py 5678/5678_Slides_en.pptx --voice-id $VOICE_ID --speed 1.04
 
 # Create video (after exporting .pptx → .pdf)
-python3 create_video.py 1091/1091_Slides_en.pdf 1091/1091_Slides_en_audio/ \
-    --out 1091/1091_presentation.mp4 --padding 1
+python3 create_video.py 5678/5678_Slides_en.pdf 5678/5678_Slides_en_audio/ \
+    --out 5678/5678_presentation.mp4 --padding 1
 ```
 
 ---
@@ -320,20 +320,20 @@ lrec-video-agent/
 ├── generate_poster_script.py   # Poster: generate 5-min walkthrough script
 ├── render_poster.py            # Poster: render to PPTX
 ├── render_poster_tex.py        # Poster: render to LaTeX/PDF
-├── 1091/
-│   ├── 1091_Paper.pdf
-│   ├── 1091_Slides.pptx          # original Japanese
-│   ├── 1091_Slides_en.pptx       # English slides + notes
-│   ├── 1091_Slides_en.pdf        # exported PDF (for video creation)
-│   ├── 1091_Slides_en_audio/     # MP3 files + manifest.json
-│   └── 1091_presentation.mp4     # final video
-└── 1233/
-    ├── 1233_Paper.pdf
-    ├── 1233_Slides.pptx
-    ├── 1233_Slides_en.pptx
-    ├── 1233_Slides_en.pdf
-    ├── 1233_Slides_en_audio/
-    └── 1233_presentation.mp4
+├── 5678/
+│   ├── 5678_Paper.pdf
+│   ├── 5678_Slides.pptx          # original Japanese
+│   ├── 5678_Slides_en.pptx       # English slides + notes
+│   ├── 5678_Slides_en.pdf        # exported PDF (for video creation)
+│   ├── 5678_Slides_en_audio/     # MP3 files + manifest.json
+│   └── 5678_presentation.mp4     # final video
+└── 6789/
+    ├── 6789_Paper.pdf
+    ├── 6789_Slides.pptx
+    ├── 6789_Slides_en.pptx
+    ├── 6789_Slides_en.pdf
+    ├── 6789_Slides_en_audio/
+    └── 6789_presentation.mp4
 ```
 
 ---
