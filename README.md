@@ -6,13 +6,24 @@ conference-ready English videos with cloned-voice narration.
 ```
 Japanese .pptx  ──[translate_slides.py]──>  English slides (.pptx)
                                                      │
-Japanese notes  ──[translate_notes.py]───>  English speaker notes (.pptx)
-                                                     │
-                   [trim_notes.py]       ──>  Trimmed notes to fit target duration
-                                                     │
-                   [tts_elevenlabs.py]   ──>  Per-slide MP3 audio + manifest.json
-                                                     │
-                   [create_video.py]     ──>  Final .mp4 presentation video
+               ┌─────────────────────────────────────┤
+               │ (if Japanese notes exist)            │ (if no notes exist)
+               ▼                                      ▼
+  [translate_notes.py]                    [generate_notes.py]
+  Translate Japanese notes                Generate notes from slide content
+               └─────────────────────────────────────┤
+                                                      │
+                                                      ▼
+                                           [trim_notes.py]
+                                        Trim to fit target duration
+                                                      │
+                                                      ▼
+                                        [tts_elevenlabs.py]
+                                   Per-slide MP3 audio + manifest.json
+                                                      │
+                                                      ▼
+                                         [create_video.py]
+                                         Final .mp4 presentation
 ```
 
 ---
@@ -102,6 +113,30 @@ python3 translate_notes.py 1091/1091_Slides.pptx \
 | `source` | Original Japanese `.pptx` (notes are read from here) |
 | `target` | English `.pptx` from Step 1 (notes are written here, in-place) |
 | `--paper` | Paper PDF for terminology context (optional) |
+
+---
+
+### Step 2b — Generate speaker notes from scratch (alternative to Step 2)
+
+If your slides have no existing Japanese notes, use this script to generate
+English speaker notes directly from the slide content using Claude.
+
+```bash
+python3 generate_notes.py 1091/1091_Slides_en.pptx \
+    --paper 1091/1091_Paper.pdf \
+    --target-min 15
+```
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `input` | — | English `.pptx` (output of Step 1) |
+| `--paper` | — | Paper PDF for context (optional but recommended) |
+| `--target-min` | `15` | Target total duration in minutes |
+| `--target-wpm` | `130` | Speaking speed used to calculate per-slide word count |
+| `--overwrite` | off | Overwrite slides that already have notes |
+
+A backup is saved automatically as `<stem>_before_notes.pptx`.
+Supports resume — re-run the same command if interrupted.
 
 ---
 
@@ -276,6 +311,7 @@ python3 create_video.py 1091/1091_Slides_en.pdf 1091/1091_Slides_en_audio/ \
 lrec-video-agent/
 ├── translate_slides.py       # Step 1: translate slide text (Japanese → English)
 ├── translate_notes.py        # Step 2: translate speaker notes (Japanese → English)
+├── generate_notes.py         # Step 2b: generate notes from scratch (no Japanese notes needed)
 ├── trim_notes.py             # Step 3: trim notes to fit target duration
 ├── tts_elevenlabs.py         # Step 4: synthesize audio with cloned voice
 ├── tts_notes.py              # Alternative Step 4: OpenAI TTS (no voice cloning)
